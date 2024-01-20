@@ -39,7 +39,4 @@ def get_video_summary(video_id):
     text = ' '.join([summ['summary_text'] for summ in res])
     
     return text
-    
-video_id = "njKP3FqW3Sk"
 
-print(get_video_summary(video_id))

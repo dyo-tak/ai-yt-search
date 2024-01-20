@@ -3,6 +3,7 @@ from flask_cors import CORS
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from Sentiment import get_youtube_sentiments
+from Summary import get_video_summary
 
 app = Flask(__name__)
 CORS(app)
@@ -35,6 +36,15 @@ def sentiment(video_id):
         sentiments = get_youtube_sentiments(video_id)
         
         return jsonify(sentiments), 200
+    else:
+        return jsonify({"error": "Video ID is required"}), 400
+    
+@app.route("/summary/<video_id>")
+def summary(video_id):
+    if video_id:
+        summ = get_video_summary(video_id)
+        
+        return jsonify({"summary":summ}), 200
     else:
         return jsonify({"error": "Video ID is required"}), 400
 
