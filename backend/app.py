@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 
 @st.experimental_singleton
 def init_pinecone():
-    pinecone.init(api_key="55e1c7a7-6374-4a46-9650-b075f74e2158", environment="us-west1-gcp")
+    pinecone = Pinecone(api_key="55e1c7a7-6374-4a46-9650-b075f74e2158", environment="us-west1-gcp")
     return pinecone.Index('youtube-search')
     
 @st.experimental_singleton
@@ -50,7 +50,7 @@ if query != "":
     xq = retriever.encode([query]).tolist()
     xc = index.query(vector=xq, top_k=5, include_metadata=True)
     
-    for context in xc['results'][0]['matches']:
+    for context in xc['matches']:
         card(
             context['metadata']['thumbnail'],
             context['metadata']['title'],
