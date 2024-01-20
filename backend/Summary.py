@@ -1,33 +1,45 @@
 from youtube_transcript_api import YouTubeTranscriptApi
-from transformers import BartForConditionalGeneration, BartTokenizer
+from transformers import pipeline
 
 def get_video_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        return transcript
+        text = [entry['text'] for entry in transcript]
+        transcript_text = " ".join(text).replace("\n", " ")
+        return transcript_text
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
 
 def get_video_summary(video_id):
     transcript = get_video_transcript(video_id)
+    
+    summarizer = pipeline("summarization")
+    max_chunk = 500
 
-    if transcript:
-        transcript_text = " ".join(entry['text'] for entry in transcript)
-        print(transcript_text)
+    # Split text into sentences at '<eos>'
+    content = transcript.split(' ')
 
-        model_name = 'facebook/bart-large-cnn'
-        tokenizer = BartTokenizer.from_pretrained(model_name)
-        model = BartForConditionalGeneration.from_pretrained(model_name).to('cpu')  # Change 'cuda' to 'cpu' if you don't have a GPU
+    current_chunk = []
+    chunks = []
 
-        inputs = tokenizer(transcript_text, max_length=1024, return_tensors='pt', truncation=True)
-        summary_ids = model.generate(inputs['input_ids'], max_length=150, num_beams=4, length_penalty=2.0, early_stopping=True)
-        summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    for word in content:
+        # If adding the current word doesn't exceed the word limit
+        if sum(len(word.split()) for word in current_chunk) + len(word.split()) <= max_chunk:
+            current_chunk.append(word)
+        else:
+            # If the current word puts the chunk over the limit, start a new chunk
+            chunks.append(' '.join(current_chunk))
+            current_chunk = [word]
 
-        return summary
-    else:
-        return None
-
+    # Add the last chunk
+    chunks.append(' '.join(current_chunk))
+    res = summarizer(chunks, max_length=120, min_length=30, do_sample=False)
+    ' '.join([summ['summary_text'] for summ in res])
+    text = ' '.join([summ['summary_text'] for summ in res])
+    
+    return text
+    
 video_id = "njKP3FqW3Sk"
 
 print(get_video_summary(video_id))
