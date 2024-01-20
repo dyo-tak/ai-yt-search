@@ -1,5 +1,5 @@
 from youtube_transcript_api import YouTubeTranscriptApi
-from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+from transformers import BartForConditionalGeneration, BartTokenizer
 
 def get_video_transcript(video_id):
     try:
@@ -13,20 +13,18 @@ def get_video_summary(video_id):
     transcript = get_video_transcript(video_id)
 
     if transcript:
-        transcript_text = ""
-        for entry in transcript:
-            transcript_text += f"{entry['text']} "
+        transcript_text = " ".join(entry['text'] for entry in transcript)
+        print(transcript_text)
 
-        model_name = 'google/pegasus-xsum'
-        torch_device = 'cpu'
-        tokenizer = PegasusTokenizer.from_pretrained(model_name)
-        model = PegasusForConditionalGeneration.from_pretrained(model_name).to(torch_device)
+        model_name = 'facebook/bart-large-cnn'
+        tokenizer = BartTokenizer.from_pretrained(model_name)
+        model = BartForConditionalGeneration.from_pretrained(model_name).to('cpu')  # Change 'cuda' to 'cpu' if you don't have a GPU
 
-        batch = tokenizer.prepare_seq2seq_batch(transcript_text, truncation=True, padding='longest', return_tensors="pt").to(torch_device)
-        translated = model.generate(**batch)
-        tgt_text = tokenizer.batch_decode(translated, skip_special_tokens=True)
+        inputs = tokenizer(transcript_text, max_length=1024, return_tensors='pt', truncation=True)
+        summary_ids = model.generate(inputs['input_ids'], max_length=150, num_beams=4, length_penalty=2.0, early_stopping=True)
+        summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
-        return tgt_text
+        return summary
     else:
         return None
 
