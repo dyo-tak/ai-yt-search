@@ -50,6 +50,8 @@ if query != "":
     xq = retriever.encode([query]).tolist()
     xc = index.query(vector=xq, top_k=5, include_metadata=True)
     
+    print(xc)
+    
     for context in xc['matches']:
         card(
             context['metadata']['thumbnail'],

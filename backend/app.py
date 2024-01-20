@@ -18,7 +18,9 @@ def search():
     if query:
         xq = retriever.encode([query]).tolist()
         xc = index.query(vector=xq, top_k=5, include_metadata=True)
-        return jsonify(xc)
+        xc_dict = xc.to_dict()
+        
+        return jsonify(xc_dict), 200
     else:
         return jsonify({"error": "Query is required"}), 400
 
