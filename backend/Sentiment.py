@@ -16,7 +16,7 @@ def get_youtube_sentiments(video_id):
     # Google API setup
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyBn_z3QvDE4LOosiIL31EiGrzHmHLYeyzw"  # Replace with your actual API key
+    DEVELOPER_KEY = "AIzaSyBn_z3QvDE4LOosiIL31EiGrzHmHLYeyzw"
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
@@ -51,7 +51,7 @@ def get_youtube_sentiments(video_id):
 
     # Sentiment Analysis for each comment
     sentiments = []
-    labels = ['positive', 'negative', 'neutral']
+    labels = ['negative', 'neutral', 'positive']
 
     for comment_text in df['text']:
         preprocessed_text = preprocess(comment_text)
