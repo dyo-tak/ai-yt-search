@@ -1,5 +1,15 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 from transformers import pipeline
+import streamlit as st
+import re
+
+def extract_video_id(url):
+    pattern = re.compile(r"(?<=v=)[\w-]+")
+    match = pattern.search(url)
+    if match:
+        return match.group()
+    else:
+        return None
 
 def get_video_transcript(video_id):
     try:
@@ -41,9 +51,23 @@ def get_video_summary(video_id):
         final_chunks.append(chunks[-1])
     else:
         final_chunks = chunks
+    
+    
     res = summarizer(final_chunks, max_length=120, min_length=30, do_sample=False)
     ' '.join([summ['summary_text'] for summ in res])
     text = ' '.join([summ['summary_text'] for summ in res])
     
     return text
 
+st.title("YouTube video summary")
+url = st.text_input("Enter YouTube video URL:")
+if url:
+    # Extract video ID from URL
+    video_id =  extract_video_id(url)
+    st.write(f"Video ID: {video_id}")
+
+    # Get sentiments
+    text = get_video_summary(video_id)
+
+    # Display DataFrame
+    st.write(text)
