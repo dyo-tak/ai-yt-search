@@ -38,10 +38,7 @@ def card(thubmnail, title, url, context):
         """, unsafe_allow_html=True)
 
     
-st.write("""
-# YouTube Q&A
-Ask me a question!
-""")
+st.title('YourTube Search')
 
 st.markdown("""
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
