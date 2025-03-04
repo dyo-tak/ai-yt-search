@@ -24,13 +24,13 @@ retriever = init_retriever()
 
 import streamlit as st
 
-def card(thubmnail, title, url, context):
+def card(thumbnail, title, url, context):
     return st.markdown(f"""
     <div class="container-fluid">
         <div class="row align-items-start">
             <div class="col-md-4 col-sm-4">
                  <div class="position-relative">
-                     <a href={url}><img src={thubmnail} class="img-fluid" style="width: 192px; height: 106px"></a>
+                     <a href={url}><img src={thumbnail} class="img-fluid" style="width: 192px; height: 106px"></a>
                  </div>
              </div>
              <div  class="col-md-8 col-sm-8">
