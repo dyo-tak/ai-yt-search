@@ -1,10 +1,17 @@
 import streamlit as st
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+import os
+
+# Load the .env file
+load_dotenv()
+
+PINECONE_API = os.getenv("PINECONE_API")
 
 @st.cache_resource
 def init_pinecone():
-    pinecone = Pinecone(api_key="55e1c7a7-6374-4a46-9650-b075f74e2158", environment="us-west1-gcp")
+    pinecone = Pinecone(api_key=PINECONE_API, environment="us-west1-gcp")
 
     return pinecone.Index('youtube-search')
     
